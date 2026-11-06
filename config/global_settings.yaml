@@ -3,12 +3,33 @@ project:
   environment: "production"
   region: "us-central1"
 
-gcp:
-  project_id: "prod-data-lake-gcp"
-  datasets:
-    bronze: "bronze_raw"
-    silver: "silver_harmonized"
-    gold: "gold_datamarts"
+  default: default
+  project_name: "enterprise-dya-platform"
+  region: "us-central1"
+
+environments:
+  data-unit-dev:
+    gcp_project_id: "dev-data-lake-gcp"
+    datasets:
+      bronze: "bronze_raw_dev"
+      silver: "silver_harmonized_dev"
+      gold: "gold_datamarts_dev"
+
+  test:
+    data-unit-test:
+      gcp_project_id: "test-data-lake-gcp"
+      datasets:
+        bronze: "bronze_raw_test"
+        silver: "silver_harmonized_test"
+        gold: "gold_datamarts_test"
+
+  prod:
+    data-unit-prod:
+      gcp_project_id: "prod-data-lake-gcp"
+      datasets:
+        bronze: "bronze_raw"
+        silver: "silver_harmonized"
+        gold: "gold_datamarts"
 
 pipeline:
   incremental_window_days: 1
