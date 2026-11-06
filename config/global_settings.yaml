@@ -1,0 +1,16 @@
+project:
+  name: "enterprise-dya-platform"
+  environment: "production"
+  region: "us-central1"
+
+gcp:
+  project_id: "prod-data-lake-gcp"
+  datasets:
+    bronze: "bronze_raw"
+    silver: "silver_harmonized"
+    gold: "gold_datamarts"
+
+pipeline:
+  incremental_window_days: 1
+  max_retries: 3
+  timeout_seconds: 300

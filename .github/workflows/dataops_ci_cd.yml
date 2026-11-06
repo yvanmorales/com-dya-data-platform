@@ -1,0 +1,51 @@
+name: Enterprise DataOps CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  dataops-validation:
+    name: Lint, Test & Dataform Compilation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # --- BLOQUE 1: VALIDACIÓN DE CÓDIGO PYTHON ---
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Code Linting (Flake8)
+        run: flake8 src/ tests/ --max-line-length=100 --exclude=venv
+
+      - name: Run Unit Tests (Pytest)
+        run: pytest tests/unit/ -v
+
+      # --- BLOQUE 2: VALIDACIÓN DE INFRAESTRUCTURA DE DATOS (DATAFORM) ---
+      - name: Set up Node.js (Required for Dataform CLI)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dataform Core & CLI
+        run: |
+          npm install -g @dataform/cli
+
+      - name: Validate Dataform Compilation (Dry-Run)
+        run: |
+          echo "Compilando definiciones SQLX para verificar sintaxis y referencias..."
+          dataform compile --json-config dataform/dataform.json
+          echo "¡Compilación de Dataform exitosa! Sin errores de dependencias cruzadas."

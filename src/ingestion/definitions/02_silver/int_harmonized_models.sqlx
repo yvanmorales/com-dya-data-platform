@@ -1,0 +1,31 @@
+config {
+    type: "incremental",
+    schema: "silver_harmonized",
+    description: "Capa Silver: Limpieza y unificación con optimización de Partition Pruning.",
+    tags: ["silver", "harmonized"],
+    bigquery: {
+        partitionBy: "DATE(created_at)",
+        clusterBy: ["client_id", "transaction_id"]
+    },
+    assertions: {
+        uniqueKey: ["transaction_id"],
+        nonNull: ["transaction_id", "client_id", "amount", "created_at"]
+    }
+}
+
+SELECT
+    SAFE_CAST(transaction_id AS STRING) AS transaction_id,
+    SAFE_CAST(client_id AS STRING) AS client_id,
+    SAFE_CAST(amount AS NUMERIC) AS amount,
+    SAFE_CAST(tax_amount AS NUMERIC) AS tax_amount,
+    SAFE_CAST(created_at AS TIMESTAMP) AS created_at,
+    CURRENT_TIMESTAMP() AS updated_at
+FROM
+    ${ref("stg_raw_events")}
+WHERE
+    transaction_id IS NOT NULL
+    -- Filtro incremental optimizado para utilizar particionamiento nativo
+    ${when(incremental(), `
+        AND DATE(created_at) >= DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY)
+        AND created_at > (SELECT MAX(created_at) FROM ${self()})
+    `)}

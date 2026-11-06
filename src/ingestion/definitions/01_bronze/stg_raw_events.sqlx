@@ -1,0 +1,18 @@
+config {
+    type: "view",
+    schema: "bronze_raw",
+    description: "Capa Bronze: Vista unificada de eventos limpios listos para armonización.",
+    tags: ["bronze", "raw"]
+}
+
+SELECT
+    transaction_id,
+    client_id,
+    amount,
+    tax_amount,
+    created_at,
+    ingestion_timestamp
+FROM
+    ${ref("raw_events_stream_validated")}
+WHERE
+    status = 'SUCCESS'

@@ -1,0 +1,19 @@
+config {
+    type: "table",
+    schema: "gold_datamarts",
+    description: "Capa Gold: Modelo dimensional y métricas de negocio para tableros ejecutivos.",
+    tags: ["gold", "datamart", "kpis"]
+}
+
+SELECT
+    DATE(created_at) AS transaction_date,
+    store_location,
+    COUNT(DISTINCT transaction_id) AS total_transactions,
+    COUNT(DISTINCT client_id) AS active_clients,
+    SUM(amount) AS total_revenue,
+    SUM(tax_amount) AS total_tax,
+    AVG(amount) AS average_ticket
+FROM
+    ${ref("int_harmonized_models")}
+GROUP BY
+    1, 2

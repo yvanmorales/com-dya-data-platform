@@ -1,0 +1,13 @@
+# Python / Entornos Virtuales
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Credenciales y Secretos de GCP
+*.json
+secrets/
+.env
+
+# Dataform local
+.dataform/

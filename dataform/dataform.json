@@ -1,0 +1,9 @@
+{
+  "warehouse": "bigquery",
+  "defaultDataset": "silver_harmonized",
+  "defaultLocation": "US",
+  "assertionSchema": "dataform_assertions",
+  "vars": {
+    "environment": "production"
+  }
+}
